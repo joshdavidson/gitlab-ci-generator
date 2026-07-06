@@ -66,5 +66,27 @@ npm run lint      # tsc typecheck
 ## CI
 
 This repo's own [.gitlab-ci.yml](.gitlab-ci.yml) runs on the Defiant Labs
-shell runner: `test` (typecheck + vitest) and `build` (bundle artifact).
+shell runner: `test` (typecheck + vitest), `build` (bundle artifact), and
+`containerize` (image build + push, main and tags only).
 A commented-out `pages` job is included for publishing via GitLab Pages.
+
+## Docker
+
+On every merge to `main` (and on tags) CI builds an nginx image serving the
+production bundle and pushes it to this project's GitLab container registry
+(project → **Deploy → Container Registry**), tagged `latest` and with the
+commit short SHA:
+
+```sh
+docker pull gitlab.defiantlabs.cloud:5050/defiant/gitlab-ci-generator:latest
+docker run --rm -p 8080:80 gitlab.defiantlabs.cloud:5050/defiant/gitlab-ci-generator:latest
+# → http://localhost:8080
+```
+
+To build the image locally, produce `dist/` first — the [Dockerfile](Dockerfile)
+only packages the prebuilt bundle:
+
+```sh
+npm run build
+docker build -t gitlab-ci-generator .
+```

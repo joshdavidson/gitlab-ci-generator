@@ -27,15 +27,30 @@ The preview updates live; **Copy** or **Download** the result and drop it in
 your repo. Generated pipelines are portable to gitlab.com and self-hosted
 GitLab.
 
-## Development
+## Running locally
 
 ```sh
-npm install
-npm run dev       # dev server
+npm install       # first time only
+npm run dev       # dev server with hot reload → http://localhost:5173
+```
+
+Or serve the production build:
+
+```sh
+npm run build             # production bundle in dist/
+npm run preview           # serve dist/ → http://localhost:4173
+npm run preview -- --host # same, but reachable from other machines on your network
+```
+
+Both servers bind to localhost only by default; add `-- --host` (note the extra
+`--`, which passes the flag through npm to Vite) to listen on all interfaces.
+The app is fully client-side — there is no backend to configure.
+
+## Development checks
+
+```sh
 npm run test      # vitest — generator scenario tests (output must parse as YAML)
 npm run lint      # tsc typecheck
-npm run build     # production bundle in dist/
-npm run preview   # serve the production bundle
 ```
 
 ## How it's structured

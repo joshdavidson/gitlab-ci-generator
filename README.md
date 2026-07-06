@@ -66,9 +66,20 @@ npm run lint      # tsc typecheck
 ## CI
 
 This repo's own [.gitlab-ci.yml](.gitlab-ci.yml) runs on the Defiant Labs
-shell runner: `test` (typecheck + vitest), `build` (bundle artifact), and
-`containerize` (image build + push, main and tags only).
-A commented-out `pages` job is included for publishing via GitLab Pages.
+shell runner: `test` (typecheck + vitest), `build` (bundle artifact),
+`containerize` (image build + push, main and tags only), and `deploy`
+(GitLab Pages, main only).
+
+## Deployment
+
+Every merge to `main` publishes the tested production bundle to GitLab Pages:
+
+**http://defiant.pages.defiantlabs.cloud/gitlab-ci-generator**
+
+The `pages` job reuses the `dist/` artifact from the `build` job (the exact
+bundle the tests ran against), so no rebuild happens at deploy time. The
+container image below is still published and remains the way to run the app
+anywhere other than Pages.
 
 ## Docker
 

@@ -1,0 +1,7 @@
+# Only dist/, nginx.conf and the Dockerfile matter to the image build —
+# keep the (podman) build context tiny.
+node_modules/
+.git/
+.npm/
+*.log
+*.tsbuildinfo

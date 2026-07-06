@@ -4,8 +4,10 @@
 # Node.js is preinstalled on build01.
 #
 # Stages:
-#   test  -> typecheck + unit tests (generator output validity)
-#   build -> production bundle, kept as an artifact for 1 week
+#   test         -> typecheck + unit tests (generator output validity)
+#   build        -> production bundle, kept as an artifact for 1 week
+#   containerize -> OCI image via rootless podman, pushed to this project's
+#                   GitLab container registry (main + tags only)
 #
 # Deploy: intentionally none for now. To publish via GitLab Pages, uncomment
 # the `pages` job below and add `deploy` to the stages list.
@@ -13,6 +15,7 @@
 stages:
   - test
   - build
+  - containerize
 
 # Run MR pipelines and default-branch/tag pipelines; skip everything else.
 workflow:
@@ -53,6 +56,21 @@ build:
     paths:
       - dist/
     expire_in: 1 week
+
+# Build the image from the prebuilt dist/ artifact and push to this project's
+# GitLab container registry — same podman-on-shell-runner pattern as the
+# mcp-servers repos. MR pipelines skip this; images publish only from main/tags.
+container:
+  stage: containerize
+  needs: [build]        # reuse the tested dist/ artifact — ship what was built
+  rules:
+    - if: '$CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH'
+    - if: '$CI_COMMIT_TAG'
+  script:
+    - echo "$CI_JOB_TOKEN" | podman login -u "$CI_REGISTRY_USER" --password-stdin "$CI_REGISTRY"
+    - podman build -t "$CI_REGISTRY_IMAGE:$CI_COMMIT_SHORT_SHA" -t "$CI_REGISTRY_IMAGE:latest" .
+    - podman push "$CI_REGISTRY_IMAGE:$CI_COMMIT_SHORT_SHA"
+    - podman push "$CI_REGISTRY_IMAGE:latest"
 
 # pages:
 #   stage: deploy          # <- also add "deploy" to the stages list above

@@ -1,1 +1,21 @@
-proxmox_mcp.log
+# Dependencies
+node_modules/
+.npm/
+
+# Build output
+dist/
+public/
+
+# Test output
+coverage/
+
+# TypeScript incremental build info
+*.tsbuildinfo
+
+# Logs
+*.log
+
+# OS / editor
+.DS_Store
+.idea/
+.vscode/

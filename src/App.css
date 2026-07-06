@@ -1,0 +1,273 @@
+/* Layout: header, two-pane main (wizard | sticky preview), footer. */
+.app {
+  max-width: 1400px;
+  margin: 0 auto;
+  padding: 2rem 1.5rem 3rem;
+}
+
+.app-header {
+  margin-bottom: 2rem;
+  max-width: 46rem;
+}
+
+.app-header h1 {
+  font-size: 2rem;
+  margin-bottom: 0.5rem;
+}
+
+.app-header .accent {
+  color: var(--accent);
+}
+
+.app-header p {
+  color: var(--fg-muted);
+}
+
+.app-main {
+  display: grid;
+  grid-template-columns: minmax(20rem, 30rem) minmax(24rem, 1fr);
+  gap: 2rem;
+  align-items: start;
+}
+
+@media (max-width: 900px) {
+  .app-main {
+    grid-template-columns: 1fr;
+  }
+}
+
+.app-footer {
+  margin-top: 3rem;
+  color: var(--fg-muted);
+  font-size: 0.85rem;
+  text-align: center;
+}
+
+/* Wizard sections */
+.wizard {
+  display: flex;
+  flex-direction: column;
+  gap: 1.25rem;
+}
+
+.wizard-section {
+  background: var(--bg-panel);
+  border: 1px solid var(--border-soft);
+  border-radius: 10px;
+  padding: 1.25rem;
+}
+
+.wizard-section > header {
+  display: flex;
+  gap: 0.75rem;
+  align-items: baseline;
+  margin-bottom: 1rem;
+}
+
+.wizard-section h2 {
+  font-size: 1.05rem;
+}
+
+.wizard-section > header p {
+  color: var(--fg-muted);
+  font-size: 0.85rem;
+  margin-top: 0.15rem;
+}
+
+.step-badge {
+  flex: none;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 1.6rem;
+  height: 1.6rem;
+  border-radius: 50%;
+  background: var(--accent);
+  color: #fff;
+  font-weight: 700;
+  font-size: 0.85rem;
+}
+
+.section-body {
+  display: flex;
+  flex-direction: column;
+  gap: 0.9rem;
+}
+
+/* Fields */
+.field {
+  display: flex;
+  flex-direction: column;
+  gap: 0.3rem;
+  border: 0;
+  padding: 0;
+  margin: 0;
+}
+
+.field-label {
+  font-weight: 600;
+  font-size: 0.88rem;
+}
+
+.field-hint {
+  color: var(--fg-muted);
+  font-size: 0.8rem;
+}
+
+.toggle-field {
+  display: flex;
+  flex-direction: column;
+  gap: 0.3rem;
+}
+
+.toggle-row {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  cursor: pointer;
+}
+
+.toggle-row input {
+  accent-color: var(--accent);
+  width: 1rem;
+  height: 1rem;
+}
+
+.toggle-detail {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+  margin: 0.35rem 0 0 1.5rem;
+  padding: 0.75rem;
+  background: var(--bg-inset);
+  border-radius: 8px;
+}
+
+.radio-group legend {
+  margin-bottom: 0.4rem;
+  padding: 0;
+}
+
+.radio-options {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(11rem, 1fr));
+  gap: 0.5rem;
+}
+
+.radio-option {
+  display: flex;
+  gap: 0.5rem;
+  align-items: flex-start;
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 0.55rem 0.65rem;
+  cursor: pointer;
+  font-size: 0.88rem;
+}
+
+.radio-option:hover {
+  border-color: var(--accent);
+}
+
+.radio-option.selected {
+  border-color: var(--accent);
+  background: color-mix(in srgb, var(--accent) 8%, var(--bg-panel));
+}
+
+.radio-option input {
+  accent-color: var(--accent);
+  margin-top: 0.2rem;
+}
+
+.radio-title {
+  display: block;
+  font-weight: 600;
+}
+
+.radio-desc {
+  display: block;
+  color: var(--fg-muted);
+  font-size: 0.78rem;
+  margin-top: 0.1rem;
+}
+
+/* Preview pane */
+.preview-pane {
+  position: sticky;
+  top: 1.5rem;
+}
+
+@media (max-width: 900px) {
+  .preview-pane {
+    position: static;
+  }
+}
+
+.preview {
+  background: var(--bg-panel);
+  border: 1px solid var(--border-soft);
+  border-radius: 10px;
+  overflow: hidden;
+}
+
+.preview-header {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 0.65rem 1rem;
+  border-bottom: 1px solid var(--border-soft);
+}
+
+.preview-title {
+  font-weight: 700;
+}
+
+.preview-meta {
+  color: var(--fg-muted);
+  font-size: 0.8rem;
+}
+
+.preview-actions {
+  margin-left: auto;
+  display: flex;
+  gap: 0.5rem;
+}
+
+.yaml-body {
+  margin: 0;
+  padding: 1rem;
+  background: var(--bg-code);
+  color: var(--fg-code);
+  overflow: auto;
+  max-height: calc(100vh - 14rem);
+  font-family: ui-monospace, SFMono-Regular, 'SF Mono', Menlo, Consolas, monospace;
+  font-size: 0.8rem;
+  line-height: 1.55;
+}
+
+@media (max-width: 900px) {
+  .yaml-body {
+    max-height: 60vh;
+  }
+}
+
+.yaml-line {
+  white-space: pre;
+  min-height: 1.55em;
+}
+
+.yaml-comment {
+  color: var(--yaml-comment);
+  font-style: italic;
+}
+
+.yaml-key {
+  color: var(--yaml-key);
+}
+
+.preview-footnote {
+  padding: 0.6rem 1rem;
+  color: var(--fg-muted);
+  font-size: 0.8rem;
+  border-top: 1px solid var(--border-soft);
+}

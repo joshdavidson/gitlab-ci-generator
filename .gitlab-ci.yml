@@ -4,8 +4,8 @@
 # Node.js is preinstalled on build01.
 #
 # Stages:
-#   test         -> typecheck + unit tests (generator output validity)
-#   build        -> production bundle, kept as an artifact for 1 week
+#   test         -> typecheck + unit tests (generator output validity + API)
+#   build        -> production bundle + API server bundle, artifacts for 1 week
 #   containerize -> OCI image via rootless podman, pushed to this project's
 #                   GitLab container registry (main + tags only)
 #   deploy       -> publish the tested dist/ bundle to GitLab Pages (main only):
@@ -51,10 +51,11 @@ build:
   stage: build
   script:
     - npm ci --cache .npm --prefer-offline
-    - npm run build
+    - npm run build   # emits dist/ (SPA) and dist-server/ (API server)
   artifacts:
     paths:
       - dist/
+      - dist-server/
     expire_in: 1 week
 
 # Build the image from the prebuilt dist/ artifact and push to this project's

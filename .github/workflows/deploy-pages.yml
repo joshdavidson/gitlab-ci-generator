@@ -3,18 +3,23 @@
 # The canonical repo lives on GitLab (defiant/gitlab-ci-generator) and is
 # push-mirrored here; .gitlab-ci.yml drives the GitLab side (test/build/
 # containerize/GitLab Pages) and is untouched by this workflow. When the
-# mirror pushes main, this workflow lint+tests, builds, and publishes the
-# static dist/ bundle to GitHub Pages:
-#   https://joshdavidson.github.io/gitlab-ci-generator/
+# mirror pushes main (or a tag), this workflow lint+tests and builds once,
+# then from that tested output:
+#   - deploy:    publishes the static dist/ bundle to GitHub Pages (main only)
+#                  https://joshdavidson.github.io/gitlab-ci-generator/
+#   - container: builds the Dockerfile from dist/ + dist-server/ and pushes
+#                to GHCR (main + tags, same tag scheme as the GitLab registry:
+#                latest + 8-char short SHA)
+#                  ghcr.io/joshdavidson/gitlab-ci-generator
 #
-# dist-server/ (the HTTP API bundle) is built for parity with GitLab CI but
-# not deployed — Pages serves only the static web UI.
+# Pages serves only the static web UI; the image also serves the HTTP API.
 
-name: Deploy to GitHub Pages
+name: Build & Deploy
 
 on:
   push:
     branches: [main]
+    tags: ['*']
   workflow_dispatch:
 
 permissions:
@@ -47,9 +52,19 @@ jobs:
       - uses: actions/upload-pages-artifact@v3
         with:
           path: dist
+      # Hand the tested bundles to the container job — ship what was tested,
+      # same as the GitLab container job reusing the build artifact.
+      - uses: actions/upload-artifact@v4
+        with:
+          name: build-output
+          path: |
+            dist
+            dist-server
+          retention-days: 7
 
   deploy:
     needs: build
+    if: github.ref == 'refs/heads/main'
     runs-on: ubuntu-latest
     environment:
       name: github-pages
@@ -57,3 +72,27 @@ jobs:
     steps:
       - id: deployment
         uses: actions/deploy-pages@v4
+
+  container:
+    needs: build
+    if: github.ref == 'refs/heads/main' || github.ref_type == 'tag'
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      packages: write
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/download-artifact@v4
+        with:
+          name: build-output
+      - name: Log in to GHCR
+        run: echo "${{ secrets.GITHUB_TOKEN }}" | docker login ghcr.io -u "${{ github.actor }}" --password-stdin
+      - name: Build and push image
+        run: |
+          IMAGE=ghcr.io/${{ github.repository }}
+          SHORT_SHA=${GITHUB_SHA::8}
+          docker build \
+            --label "org.opencontainers.image.source=https://github.com/${{ github.repository }}" \
+            -t "$IMAGE:$SHORT_SHA" -t "$IMAGE:latest" .
+          docker push "$IMAGE:$SHORT_SHA"
+          docker push "$IMAGE:latest"

@@ -2,6 +2,7 @@
   "name": "gitlab-ci-generator",
   "private": true,
   "version": "1.0.0",
+  "license": "MIT",
   "description": "Interactive .gitlab-ci.yml generator — answer a few questions, get an expert pipeline",
   "type": "module",
   "scripts": {

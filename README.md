@@ -171,3 +171,9 @@ node_modules):
 npm run build
 docker build -t gitlab-ci-generator .
 ```
+
+## License
+
+[MIT](LICENSE). The license covers the generator's source code only — any
+`.gitlab-ci.yml` it generates is yours, with no attribution or license
+obligations attached.

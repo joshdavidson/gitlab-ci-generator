@@ -154,6 +154,14 @@ docker run --rm -p 8080:8080 gitlab.defiantlabs.cloud:5050/defiant/gitlab-ci-gen
 # → http://localhost:8080/api/...  (HTTP API)
 ```
 
+The same image is also published to GitHub Container Registry by the mirror's
+[Build & Deploy workflow](.github/workflows/deploy-pages.yml) (same triggers,
+same `latest` + short-SHA tags), pullable without homelab access:
+
+```sh
+docker pull ghcr.io/joshdavidson/gitlab-ci-generator:latest
+```
+
 To build the image locally, produce the bundles first — the
 [Dockerfile](Dockerfile) only packages prebuilt output (`dist/` and
 `dist-server/`; the server bundle is self-contained, so the image carries no

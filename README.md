@@ -128,6 +128,18 @@ bundle the tests ran against), so no rebuild happens at deploy time. Pages
 serves only the static web UI; for the HTTP API, run the container image
 below.
 
+This repo is also push-mirrored to GitHub
+([joshdavidson/gitlab-ci-generator](https://github.com/joshdavidson/gitlab-ci-generator)).
+When the mirror pushes `main`,
+[.github/workflows/deploy-pages.yml](.github/workflows/deploy-pages.yml)
+lint+tests, builds, and publishes the same `dist/` bundle to GitHub Pages:
+
+**https://joshdavidson.github.io/gitlab-ci-generator/**
+
+The two deploys are independent — GitLab CI ignores `.github/`, GitHub
+ignores `.gitlab-ci.yml` — and the site works at both URLs because Vite
+builds with `base: './'` (relative asset paths).
+
 ## Docker
 
 On every merge to `main` (and on tags) CI builds a Node image serving the

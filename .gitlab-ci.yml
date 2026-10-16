@@ -4,6 +4,7 @@
 # Node.js is preinstalled on build01.
 #
 # Stages:
+#   security     -> shared gitleaks scan (BLOCKING), included from defiant/iac
 #   test         -> typecheck + unit tests (generator output validity + API)
 #   build        -> production bundle + API server bundle, artifacts for 1 week
 #   containerize -> OCI image via rootless podman, pushed to this project's
@@ -12,10 +13,18 @@
 #                   http://defiant.pages.defiantlabs.cloud/gitlab-ci-generator
 
 stages:
+  - security
   - test
   - build
   - containerize
   - deploy
+
+# Blocking gitleaks scan shared by the defiant repos (see ci/secret-detection.gitlab-ci.yml
+# in defiant/iac): it fails an MR or push that adds a secret, before anything deploys.
+include:
+  - project: defiant/iac
+    ref: main
+    file: ci/secret-detection.gitlab-ci.yml
 
 # Run MR pipelines and default-branch/tag pipelines; skip everything else.
 workflow:

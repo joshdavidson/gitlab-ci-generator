@@ -40,7 +40,7 @@ export function languageDefaults(language: Language, pm: PackageManager): Langua
     case 'node': {
       if (pm === 'yarn') {
         return {
-          image: 'node:20',
+          image: 'node:24',
           install: 'yarn install --frozen-lockfile --cache-folder .yarn-cache',
           lint: 'yarn lint',
           test: 'yarn test',
@@ -53,7 +53,7 @@ export function languageDefaults(language: Language, pm: PackageManager): Langua
       }
       if (pm === 'pnpm') {
         return {
-          image: 'node:20',
+          image: 'node:24',
           install:
             'corepack enable && pnpm install --frozen-lockfile --store-dir .pnpm-store',
           lint: 'pnpm lint',
@@ -66,7 +66,7 @@ export function languageDefaults(language: Language, pm: PackageManager): Langua
         }
       }
       return {
-        image: 'node:20',
+        image: 'node:24',
         install: 'npm ci --cache .npm --prefer-offline',
         lint: 'npm run lint',
         test: 'npm test',

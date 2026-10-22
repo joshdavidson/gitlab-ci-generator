@@ -30,10 +30,10 @@ include:
 workflow:
   rules:
     - if: '$CI_PIPELINE_SOURCE == "merge_request_event"'
-    - if: '$CI_COMMIT_BRANCH && $CI_OPEN_MERGE_REQUESTS'
+    - if: "$CI_COMMIT_BRANCH && $CI_OPEN_MERGE_REQUESTS"
       when: never
-    - if: '$CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH'
-    - if: '$CI_COMMIT_TAG'
+    - if: "$CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH"
+    - if: "$CI_COMMIT_TAG"
 
 default:
   tags: [shell]
@@ -72,6 +72,7 @@ test:
   stage: test
   script:
     - npm ci --cache .npm --prefer-offline
+    - npm run check
     - npm run lint
     - npm run test
   needs: []
@@ -81,7 +82,7 @@ build:
   stage: build
   script:
     - npm ci --cache .npm --prefer-offline
-    - npm run build   # emits dist/ (SPA) and dist-server/ (API server)
+    - npm run build # emits dist/ (SPA) and dist-server/ (API server)
   artifacts:
     paths:
       - dist/
@@ -93,10 +94,10 @@ build:
 # mcp-servers repos. MR pipelines skip this; images publish only from main/tags.
 container:
   stage: containerize
-  needs: [build]        # reuse the tested dist/ artifact — ship what was built
+  needs: [build] # reuse the tested dist/ artifact — ship what was built
   rules:
-    - if: '$CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH'
-    - if: '$CI_COMMIT_TAG'
+    - if: "$CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH"
+    - if: "$CI_COMMIT_TAG"
   script:
     - echo "$CI_JOB_TOKEN" | podman login -u "$CI_REGISTRY_USER" --password-stdin "$CI_REGISTRY"
     - podman build -t "$CI_REGISTRY_IMAGE:$CI_COMMIT_SHORT_SHA" -t "$CI_REGISTRY_IMAGE:latest" .
@@ -107,9 +108,9 @@ container:
 # as defiant/docs and defiant/defiantlabs.io. Auto-deploys on merge to main.
 pages:
   stage: deploy
-  needs: [build]        # reuse the tested dist/ artifact — ship what was built
+  needs: [build] # reuse the tested dist/ artifact — ship what was built
   rules:
-    - if: '$CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH'
+    - if: "$CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH"
   script:
     - rm -rf public
     - cp -r dist public

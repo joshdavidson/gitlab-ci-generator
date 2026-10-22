@@ -12,13 +12,16 @@
     "build:server": "vite build --ssr src/server/main.ts --outDir dist-server",
     "preview": "vite preview",
     "lint": "tsc -b",
-    "test": "vitest run"
+    "test": "vitest run",
+    "check": "biome check .",
+    "check:fix": "biome check --write ."
   },
   "dependencies": {
     "react": "^19.3.1",
     "react-dom": "^19.3.1"
   },
   "devDependencies": {
+    "@biomejs/biome": "2.6.2",
     "@types/node": "^24.13.2",
     "@types/react": "^19.3.0",
     "@types/react-dom": "^19",

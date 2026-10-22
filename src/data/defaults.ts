@@ -17,8 +17,16 @@ export interface LanguageDefaults {
   cacheVariables: Record<string, string>
 }
 
-export const LANGUAGES: { value: Language; label: string; pms: PackageManager[] }[] = [
-  { value: 'node', label: 'Node.js / TypeScript', pms: ['npm', 'yarn', 'pnpm'] },
+export const LANGUAGES: {
+  value: Language
+  label: string
+  pms: PackageManager[]
+}[] = [
+  {
+    value: 'node',
+    label: 'Node.js / TypeScript',
+    pms: ['npm', 'yarn', 'pnpm'],
+  },
   { value: 'python', label: 'Python', pms: ['pip', 'poetry', 'pipenv'] },
   { value: 'go', label: 'Go', pms: [] },
   { value: 'rust', label: 'Rust', pms: [] },
@@ -35,7 +43,10 @@ export function defaultPackageManager(language: Language): PackageManager {
   return entry && entry.pms.length > 0 ? entry.pms[0] : 'none'
 }
 
-export function languageDefaults(language: Language, pm: PackageManager): LanguageDefaults {
+export function languageDefaults(
+  language: Language,
+  pm: PackageManager,
+): LanguageDefaults {
   switch (language) {
     case 'node': {
       if (pm === 'yarn') {
@@ -237,7 +248,10 @@ export function languageDefaults(language: Language, pm: PackageManager): Langua
 }
 
 /** Directory the deploy job publishes (pages/ssh/s3): first artifact dir. */
-function defaultBuildDir(language: Language, defaults: LanguageDefaults): string {
+function defaultBuildDir(
+  language: Language,
+  defaults: LanguageDefaults,
+): string {
   if (language === 'static') return '.'
   const first = defaults.artifacts[0]
   return first ? first.replace(/\/$/, '') : 'dist'

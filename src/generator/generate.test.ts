@@ -1,8 +1,13 @@
 import { describe, expect, it } from 'vitest'
 import { parse } from 'yaml'
-import { activeStages, generateGitlabCI } from './generate'
-import { applyLanguageDefaults, defaultConfig, defaultPackageManager, LANGUAGES } from '../data/defaults'
+import {
+  applyLanguageDefaults,
+  defaultConfig,
+  defaultPackageManager,
+  LANGUAGES,
+} from '../data/defaults'
 import type { PipelineConfig } from '../types'
+import { activeStages, generateGitlabCI } from './generate'
 
 function parseYaml(config: PipelineConfig): Record<string, unknown> {
   const output = generateGitlabCI(config)
@@ -29,7 +34,9 @@ describe('generateGitlabCI', () => {
 
     // Kaniko is the default image build method.
     expect(output).toContain('gcr.io/kaniko-project/executor')
-    expect(output).toContain('--destination "$CI_REGISTRY_IMAGE:${CI_COMMIT_SHORT_SHA}"')
+    expect(output).toContain(
+      '--destination "$CI_REGISTRY_IMAGE:${CI_COMMIT_SHORT_SHA}"',
+    )
 
     // Cache keyed on the npm lockfile.
     const cache = doc.cache as { key: { files: string[] }; paths: string[] }
@@ -78,7 +85,10 @@ describe('generateGitlabCI', () => {
     const doc = parseYaml(config)
     expect(doc.stages).toEqual(['deploy'])
 
-    const pages = doc.pages as { script: string[]; artifacts: { paths: string[] } }
+    const pages = doc.pages as {
+      script: string[]
+      artifacts: { paths: string[] }
+    }
     expect(pages.script).toContain('mkdir .public')
     expect(pages.script).toContain('mv .public public')
     expect(pages.artifacts.paths).toEqual(['public'])
@@ -136,7 +146,11 @@ describe('generateGitlabCI', () => {
 
   it('produces valid YAML for every language at its defaults', () => {
     for (const { value } of LANGUAGES) {
-      const config = applyLanguageDefaults(defaultConfig(), value, defaultPackageManager(value))
+      const config = applyLanguageDefaults(
+        defaultConfig(),
+        value,
+        defaultPackageManager(value),
+      )
       const output = generateGitlabCI(config)
       expect(() => parse(output), `language: ${value}`).not.toThrow()
       const doc = parse(output) as Record<string, unknown>
@@ -145,7 +159,16 @@ describe('generateGitlabCI', () => {
   })
 
   it('produces valid YAML for every deploy target', () => {
-    const targets = ['none', 'pages', 'ssh', 'kubernetes', 'helm', 's3', 'npm', 'custom'] as const
+    const targets = [
+      'none',
+      'pages',
+      'ssh',
+      'kubernetes',
+      'helm',
+      's3',
+      'npm',
+      'custom',
+    ] as const
     for (const target of targets) {
       const config = defaultConfig()
       config.deploy.target = target
@@ -154,7 +177,8 @@ describe('generateGitlabCI', () => {
       expect(() => parse(output), `target: ${target}`).not.toThrow()
       if (target !== 'none') {
         const doc = parse(output) as Record<string, unknown>
-        const jobName = target === 'pages' ? 'pages' : target === 'npm' ? 'publish' : 'deploy'
+        const jobName =
+          target === 'pages' ? 'pages' : target === 'npm' ? 'publish' : 'deploy'
         expect(doc, `target: ${target}`).toHaveProperty(jobName)
       }
     }

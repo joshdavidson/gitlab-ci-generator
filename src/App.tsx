@@ -17,8 +17,8 @@ export default function App() {
         </h1>
         <p>
           Answer a few questions about your project and get a production-ready{' '}
-          <span className="mono">.gitlab-ci.yml</span> — sensible stages, caching, security
-          scanning, and deployment included.
+          <span className="mono">.gitlab-ci.yml</span> — sensible stages,
+          caching, security scanning, and deployment included.
         </p>
       </header>
       <main className="app-main">
@@ -28,8 +28,8 @@ export default function App() {
         </div>
       </main>
       <footer className="app-footer">
-        Built with React + Vite · Generated pipelines are portable to gitlab.com and
-        self-hosted GitLab
+        Built with React + Vite · Generated pipelines are portable to gitlab.com
+        and self-hosted GitLab
       </footer>
     </div>
   )

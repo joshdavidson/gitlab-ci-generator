@@ -11,8 +11,8 @@
  *   GET  *               static SPA from dist/
  */
 import type { IncomingMessage, ServerResponse } from 'node:http'
-import { activeStages, generateGitlabCI } from '../generator/generate'
 import { LANGUAGES } from '../data/defaults'
+import { activeStages, generateGitlabCI } from '../generator/generate'
 import { serveStatic } from './static'
 import { validateAndMerge } from './validate'
 

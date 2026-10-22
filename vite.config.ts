@@ -1,5 +1,5 @@
-import { defineConfig } from 'vitest/config'
 import react from '@vitejs/plugin-react'
+import { defineConfig } from 'vitest/config'
 
 // base: './' keeps asset URLs relative so the built site works at any path
 // (GitLab Pages project subpath, a plain file:// open, or an nginx root).

@@ -21,7 +21,8 @@ import {
 export function activeStages(config: PipelineConfig): string[] {
   const stages: string[] = []
   // The SAST/Secret-Detection templates attach their jobs to the test stage.
-  if (config.jobs.lint || config.jobs.test || config.jobs.security) stages.push('test')
+  if (config.jobs.lint || config.jobs.test || config.jobs.security)
+    stages.push('test')
   if (config.jobs.build) stages.push('build')
   if (config.docker.enabled) stages.push('package')
   if (config.deploy.target !== 'none') stages.push('deploy')

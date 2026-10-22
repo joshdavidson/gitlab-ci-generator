@@ -48,7 +48,10 @@ describe('validateAndMerge', () => {
   })
 
   it('accepts a valid language + package manager combination', () => {
-    const result = validateAndMerge({ language: 'java', packageManager: 'gradle' })
+    const result = validateAndMerge({
+      language: 'java',
+      packageManager: 'gradle',
+    })
     expect(result.ok).toBe(true)
     if (result.ok) expect(result.config.image).toBe('gradle:8-jdk21')
   })
@@ -56,7 +59,6 @@ describe('validateAndMerge', () => {
   it('rejects a package manager outside the language pms list', () => {
     const result = validateAndMerge({ language: 'go', packageManager: 'npm' })
     expect(result.ok).toBe(false)
-    if (!result.ok)
-      expect(result.issues[0].message).toContain('language "go"')
+    if (!result.ok) expect(result.issues[0].message).toContain('language "go"')
   })
 })

@@ -2,8 +2,9 @@
  * Live preview of the generated file with copy + download actions and a
  * lightweight line-based highlighter (comments, keys, list dashes).
  */
-import { useCallback, useMemo, useState } from 'react'
+
 import type { ReactNode } from 'react'
+import { useCallback, useMemo, useState } from 'react'
 
 function highlightLine(line: string, index: number): ReactNode {
   if (/^\s*#/.test(line)) {
@@ -39,7 +40,9 @@ export function YamlPreview(props: { yaml: string }) {
       setTimeout(() => setCopied(false), 1500)
     } catch {
       // Clipboard API unavailable (e.g. http) — fall back to a manual select.
-      window.getSelection()?.selectAllChildren(document.querySelector('.yaml-body')!)
+      window
+        .getSelection()
+        ?.selectAllChildren(document.querySelector('.yaml-body')!)
     }
   }, [props.yaml])
 
@@ -53,7 +56,10 @@ export function YamlPreview(props: { yaml: string }) {
     URL.revokeObjectURL(url)
   }, [props.yaml])
 
-  const lines = useMemo(() => props.yaml.replace(/\n$/, '').split('\n'), [props.yaml])
+  const lines = useMemo(
+    () => props.yaml.replace(/\n$/, '').split('\n'),
+    [props.yaml],
+  )
 
   return (
     <div className="preview">
@@ -79,7 +85,8 @@ export function YamlPreview(props: { yaml: string }) {
         </code>
       </pre>
       <p className="preview-footnote">
-        Validate any time in GitLab: <span className="mono">CI/CD → Pipeline editor</span> or{' '}
+        Validate any time in GitLab:{' '}
+        <span className="mono">CI/CD → Pipeline editor</span> or{' '}
         <span className="mono">/-/ci/lint</span> on your project.
       </p>
     </div>

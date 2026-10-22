@@ -39,6 +39,25 @@ default:
   tags: [shell]
   interruptible: true
 
+# build01 ships Node 18 system-wide, but the repo needs Node >=24 (package.json engines; Vite 8 /
+# vitest 5 / rolldown use node:util styleText). Provision a pinned Node 24 under the runner user's home
+# (cached across jobs, checksum-verified) instead of changing the shared host.
+.node24:
+  before_script:
+    - |
+      NODE_VER=v24.22.1
+      NODE_DIR="$HOME/.cache/node-$NODE_VER-linux-x64"
+      if [ ! -x "$NODE_DIR/bin/node" ]; then
+        TMP=$(mktemp -d)
+        curl -fsSL -o "$TMP/node.tar.xz" "https://nodejs.org/dist/$NODE_VER/node-$NODE_VER-linux-x64.tar.xz"
+        curl -fsSL "https://nodejs.org/dist/$NODE_VER/SHASUMS256.txt" | grep " node-$NODE_VER-linux-x64.tar.xz\$" | sed "s|node-.*|node.tar.xz|" > "$TMP/sum"
+        (cd "$TMP" && sha256sum -c sum)
+        mkdir -p "$NODE_DIR" && tar -xJf "$TMP/node.tar.xz" -C "$NODE_DIR" --strip-components=1
+        rm -rf "$TMP"
+      fi
+      export PATH="$NODE_DIR/bin:$PATH"
+    - node -v
+
 # Cache the npm download cache between pipelines (npm ci wipes node_modules,
 # so caching the download cache is what actually saves time).
 cache:
@@ -49,6 +68,7 @@ cache:
     - .npm/
 
 test:
+  extends: .node24
   stage: test
   script:
     - npm ci --cache .npm --prefer-offline
@@ -57,6 +77,7 @@ test:
   needs: []
 
 build:
+  extends: .node24
   stage: build
   script:
     - npm ci --cache .npm --prefer-offline

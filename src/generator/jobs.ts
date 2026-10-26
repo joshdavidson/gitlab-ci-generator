@@ -5,8 +5,9 @@
  * The YAML is hand-assembled (not serialized) so the output carries
  * comments and reads like a pipeline written by a person.
  */
-import type { PipelineConfig } from '../types'
+
 import { languageDefaults } from '../data/defaults'
+import type { PipelineConfig } from '../types'
 
 /**
  * Quote a shell command for use as a YAML plain scalar when needed.
@@ -30,7 +31,11 @@ export function scriptLines(command: string): string[] {
     .filter((l) => l !== '')
 }
 
-function emitScriptList(key: string, commands: string[], indent = '  '): string[] {
+function emitScriptList(
+  key: string,
+  commands: string[],
+  indent = '  ',
+): string[] {
   const lines = [`${indent}${key}:`]
   for (const c of commands) lines.push(`${indent}  - ${yamlScalar(c)}`)
   return lines
@@ -89,14 +94,18 @@ export function workflowBlock(): string[] {
 
 export function defaultBlock(config: PipelineConfig): string[] {
   const lines = ['default:']
-  if (config.image.trim() !== '') lines.push(`  image: ${yamlScalar(config.image.trim())}`)
+  if (config.image.trim() !== '')
+    lines.push(`  image: ${yamlScalar(config.image.trim())}`)
   lines.push('  interruptible: true')
   return lines
 }
 
 export function variablesBlock(config: PipelineConfig): string[] {
   if (!config.cache) return []
-  const vars = languageDefaults(config.language, config.packageManager).cacheVariables
+  const vars = languageDefaults(
+    config.language,
+    config.packageManager,
+  ).cacheVariables
   const entries = Object.entries(vars)
   if (entries.length === 0) return []
   return ['variables:', ...entries.map(([k, v]) => `  ${k}: "${v}"`)]
@@ -134,7 +143,8 @@ function coreJob(
 ): string[] {
   const lines = [`${name}:`, `  stage: ${stage}`]
   const install = scriptLines(config.jobs.installCommand)
-  if (install.length > 0) lines.push(...emitScriptList('before_script', install))
+  if (install.length > 0)
+    lines.push(...emitScriptList('before_script', install))
   lines.push(...emitScriptList('script', scriptLines(command)))
   lines.push(...extra)
   return lines
@@ -267,8 +277,12 @@ export function dockerJob(config: PipelineConfig): string[] {
 function environmentBlock(config: PipelineConfig): string[] {
   const { environmentName, environmentUrl } = config.deploy
   if (environmentName.trim() === '') return []
-  const lines = ['  environment:', `    name: ${yamlScalar(environmentName.trim())}`]
-  if (environmentUrl.trim() !== '') lines.push(`    url: ${yamlScalar(environmentUrl.trim())}`)
+  const lines = [
+    '  environment:',
+    `    name: ${yamlScalar(environmentName.trim())}`,
+  ]
+  if (environmentUrl.trim() !== '')
+    lines.push(`    url: ${yamlScalar(environmentUrl.trim())}`)
   return lines
 }
 
@@ -338,7 +352,8 @@ export function deployJob(config: PipelineConfig): string[] {
         ...restriction,
       ]
     case 'helm': {
-      const release = config.projectName.trim() !== '' ? slug(config.projectName) : 'my-app'
+      const release =
+        config.projectName.trim() !== '' ? slug(config.projectName) : 'my-app'
       return [
         '# Deploy with Helm via a GitLab agent connection (KUBE_CONTEXT as above).',
         'deploy:',
@@ -397,7 +412,9 @@ export function deployJob(config: PipelineConfig): string[] {
         '  stage: deploy',
         ...emitScriptList(
           'script',
-          commands.length > 0 ? commands : ['echo "add your deploy commands here"'],
+          commands.length > 0
+            ? commands
+            : ['echo "add your deploy commands here"'],
         ),
         ...environmentBlock(config),
         ...restriction,

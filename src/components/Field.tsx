@@ -66,7 +66,10 @@ export function SelectField<T extends string>(props: {
   return (
     <label className="field">
       <span className="field-label">{props.label}</span>
-      <select value={props.value} onChange={(e) => props.onChange(e.target.value as T)}>
+      <select
+        value={props.value}
+        onChange={(e) => props.onChange(e.target.value as T)}
+      >
         {props.options.map((o) => (
           <option key={o.value} value={o.value}>
             {o.label}
@@ -96,7 +99,9 @@ export function ToggleField(props: {
         <span className="field-label">{props.label}</span>
       </label>
       {props.hint && <span className="field-hint">{props.hint}</span>}
-      {props.checked && props.children && <div className="toggle-detail">{props.children}</div>}
+      {props.checked && props.children && (
+        <div className="toggle-detail">{props.children}</div>
+      )}
     </div>
   )
 }
@@ -112,7 +117,10 @@ export function RadioGroup<T extends string>(props: {
       <legend className="field-label">{props.label}</legend>
       <div className="radio-options">
         {props.options.map((o) => (
-          <label key={o.value} className={`radio-option${props.value === o.value ? ' selected' : ''}`}>
+          <label
+            key={o.value}
+            className={`radio-option${props.value === o.value ? ' selected' : ''}`}
+          >
             <input
               type="radio"
               name={props.label}
@@ -122,7 +130,9 @@ export function RadioGroup<T extends string>(props: {
             />
             <span>
               <span className="radio-title">{o.label}</span>
-              {o.description && <span className="radio-desc">{o.description}</span>}
+              {o.description && (
+                <span className="radio-desc">{o.description}</span>
+              )}
             </span>
           </label>
         ))}

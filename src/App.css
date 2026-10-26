@@ -240,7 +240,8 @@
   color: var(--fg-code);
   overflow: auto;
   max-height: calc(100vh - 14rem);
-  font-family: ui-monospace, SFMono-Regular, 'SF Mono', Menlo, Consolas, monospace;
+  font-family:
+    ui-monospace, SFMono-Regular, "SF Mono", Menlo, Consolas, monospace;
   font-size: 0.8rem;
   line-height: 1.55;
 }

@@ -5,11 +5,11 @@
  * the same way the wizard does — language/packageManager go through
  * applyLanguageDefaults first, explicit fields win afterwards.
  */
-import type { Language, PackageManager, PipelineConfig } from '../types'
+
 import {
-  LANGUAGES,
   applyLanguageDefaults,
   defaultConfig,
+  LANGUAGES,
 } from '../data/defaults'
 import {
   DEPLOY_TARGETS,
@@ -17,6 +17,7 @@ import {
   REGISTRY_TARGETS,
   RULES_STYLES,
 } from '../data/enums'
+import type { Language, PackageManager, PipelineConfig } from '../types'
 
 export interface ValidationIssue {
   path: string
@@ -169,9 +170,7 @@ function merge<T extends object>(base: T, patch: DeepPartial<T>): T {
   const out = { ...base } as Record<string, unknown>
   for (const [key, value] of Object.entries(patch)) {
     if (value === undefined) continue
-    out[key] = isPlainObject(value)
-      ? merge(out[key] as object, value)
-      : value
+    out[key] = isPlainObject(value) ? merge(out[key] as object, value) : value
   }
   return out as T
 }

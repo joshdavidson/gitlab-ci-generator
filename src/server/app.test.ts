@@ -1,11 +1,15 @@
-import { createServer, type Server } from 'node:http'
 import { mkdir, mkdtemp, writeFile } from 'node:fs/promises'
+import { createServer, type Server } from 'node:http'
 import type { AddressInfo } from 'node:net'
 import { tmpdir } from 'node:os'
 import path from 'node:path'
 import { afterAll, beforeAll, describe, expect, it } from 'vitest'
 import { parse } from 'yaml'
-import { applyLanguageDefaults, defaultConfig, LANGUAGES } from '../data/defaults'
+import {
+  applyLanguageDefaults,
+  defaultConfig,
+  LANGUAGES,
+} from '../data/defaults'
 import { activeStages, generateGitlabCI } from '../generator/generate'
 import { createApp } from './app'
 
@@ -65,7 +69,9 @@ describe('POST /api/generate', () => {
       JSON.stringify({ language: 'python', packageManager: 'poetry' }),
     )
     expect(await res.text()).toBe(
-      generateGitlabCI(applyLanguageDefaults(defaultConfig(), 'python', 'poetry')),
+      generateGitlabCI(
+        applyLanguageDefaults(defaultConfig(), 'python', 'poetry'),
+      ),
     )
   })
 
@@ -114,9 +120,7 @@ describe('POST /api/generate', () => {
     const res = await generate(JSON.stringify({ langauge: 'go' }))
     expect(res.status).toBe(400)
     const body = await asJson(res)
-    expect(body.issues).toEqual([
-      { path: 'langauge', message: 'unknown key' },
-    ])
+    expect(body.issues).toEqual([{ path: 'langauge', message: 'unknown key' }])
   })
 
   it('rejects wrong types and collects every issue', async () => {

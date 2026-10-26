@@ -2,6 +2,8 @@
  * The question form. Five sections; every answer updates the config and the
  * YAML preview re-renders live.
  */
+
+import { applyLanguageDefaults, LANGUAGES } from '../data/defaults'
 import type {
   DeployTarget,
   DockerMethod,
@@ -11,9 +13,14 @@ import type {
   RegistryTarget,
   RulesStyle,
 } from '../types'
-import { applyLanguageDefaults, LANGUAGES } from '../data/defaults'
+import {
+  RadioGroup,
+  SelectField,
+  TextAreaField,
+  TextField,
+  ToggleField,
+} from './Field'
 import { Section } from './Section'
-import { RadioGroup, SelectField, TextAreaField, TextField, ToggleField } from './Field'
 
 const PM_LABELS: Record<PackageManager, string> = {
   npm: 'npm',
@@ -59,10 +66,16 @@ export function Wizard(props: {
   const isDockerOnly = config.language === 'docker'
   const isStatic = config.language === 'static'
   const hasCoreJobs = !isDockerOnly && !isStatic
-  const deployUsesBuildDir = ['pages', 'ssh', 's3'].includes(config.deploy.target)
-  const deployHasEnvironment = ['ssh', 'kubernetes', 'helm', 's3', 'custom'].includes(
+  const deployUsesBuildDir = ['pages', 'ssh', 's3'].includes(
     config.deploy.target,
   )
+  const deployHasEnvironment = [
+    'ssh',
+    'kubernetes',
+    'helm',
+    's3',
+    'custom',
+  ].includes(config.deploy.target)
 
   return (
     <div className="wizard">
@@ -81,14 +94,18 @@ export function Wizard(props: {
           label="Language / project type"
           value={config.language}
           options={LANGUAGES.map((l) => ({ value: l.value, label: l.label }))}
-          onChange={(language) => onChange(applyLanguageDefaults(config, language))}
+          onChange={(language) =>
+            onChange(applyLanguageDefaults(config, language))
+          }
         />
         {pms.length > 0 && (
           <SelectField<PackageManager>
             label="Package manager"
             value={config.packageManager}
             options={pms.map((pm) => ({ value: pm, label: PM_LABELS[pm] }))}
-            onChange={(pm) => onChange(applyLanguageDefaults(config, config.language, pm))}
+            onChange={(pm) =>
+              onChange(applyLanguageDefaults(config, config.language, pm))
+            }
           />
         )}
         {!isDockerOnly && (
@@ -193,12 +210,14 @@ export function Wizard(props: {
               {
                 value: 'kaniko',
                 label: 'Kaniko',
-                description: 'Works on shared runners — no privileged mode needed. Recommended.',
+                description:
+                  'Works on shared runners — no privileged mode needed. Recommended.',
               },
               {
                 value: 'dind',
                 label: 'Docker-in-Docker',
-                description: 'Classic docker build; requires a privileged runner.',
+                description:
+                  'Classic docker build; requires a privileged runner.',
               },
               {
                 value: 'buildah',
@@ -212,7 +231,10 @@ export function Wizard(props: {
             label="Registry"
             value={config.docker.registry}
             options={[
-              { value: 'gitlab', label: 'GitLab container registry (this project)' },
+              {
+                value: 'gitlab',
+                label: 'GitLab container registry (this project)',
+              },
               { value: 'dockerhub', label: 'Docker Hub' },
               { value: 'custom', label: 'Custom registry' },
             ]}
@@ -220,7 +242,9 @@ export function Wizard(props: {
               patchDocker({
                 registry,
                 imageName:
-                  registry === 'gitlab' ? '$CI_REGISTRY_IMAGE' : config.docker.imageName,
+                  registry === 'gitlab'
+                    ? '$CI_REGISTRY_IMAGE'
+                    : config.docker.imageName,
               })
             }
           />
@@ -249,7 +273,11 @@ export function Wizard(props: {
         </ToggleField>
       </Section>
 
-      <Section step={4} title="Deployment" description="Where should releases go?">
+      <Section
+        step={4}
+        title="Deployment"
+        description="Where should releases go?"
+      >
         <SelectField<DeployTarget>
           label="Deploy target"
           value={config.deploy.target}

@@ -51,12 +51,12 @@ curl -X POST localhost:8080/api/generate -H 'content-type: application/json' \
   -H 'accept: application/json' -d '{"language":"go","docker":{"enabled":true}}'
 ```
 
-| Endpoint | What it does |
-|---|---|
+| Endpoint             | What it does                                                                                                                   |
+| -------------------- | ------------------------------------------------------------------------------------------------------------------------------ |
 | `POST /api/generate` | Partial `PipelineConfig` JSON → `.gitlab-ci.yml` text (or a `{yaml, config, stages}` envelope with `Accept: application/json`) |
-| `GET /api/defaults` | The fully materialized default config; `?language=` and `?packageManager=` apply language defaults first |
-| `GET /api/languages` | Supported languages and their package managers |
-| `GET /healthz` | Liveness probe |
+| `GET /api/defaults`  | The fully materialized default config; `?language=` and `?packageManager=` apply language defaults first                       |
+| `GET /api/languages` | Supported languages and their package managers                                                                                 |
+| `GET /healthz`       | Liveness probe                                                                                                                 |
 
 The config shape is [`PipelineConfig` in src/types.ts](src/types.ts) — every
 wizard answer has a JSON field.
